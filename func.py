@@ -48,3 +48,24 @@ def find_top_3_genre(user_id,data):
     top_3_genres = genre_ratings.sort_values(ascending=False).head(3).index.tolist()
 
     return top_3_genres
+
+def get_similar_users(user_id, data):
+    """
+    Get the most similar user to the given user ID from DataFrame.
+
+    This function sorts the users based on their similarity to the specified user ID. It then returns the most similar user.
+
+    Args:
+    user_id (int): user ID intend to find most similar user.
+    data (DataFrame): The dataset containing user watch histories along with genres and ratings.
+
+    Returns:
+    int: The user ID of the most similar user.
+    """
+    user_movie_matrix = data.pivot_table(index='userId', columns='title', values='rating')
+    user_movie_matrix = user_movie_matrix.fillna(0)
+    similarity_matrix = cosine_similarity(user_movie_matrix)
+    similarity_df = pd.DataFrame(similarity_matrix, index=user_movie_matrix.index, columns=user_movie_matrix.index)
+    similar_users = similarity_df[user_id].sort_values(ascending=False)
+    most_similar = similar_users.index[1]
+    return most_similar
