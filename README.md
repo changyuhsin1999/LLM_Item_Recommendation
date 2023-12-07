@@ -1,5 +1,6 @@
 # LLM_Item_Recommendation (AIPI 531 Final Project)
 Team member: Cindy Chang, Yiyang Shao
+
 Prompt Engineering of LLM for item recommendation task
 
 Using Large Language Models (LLMs) as recommenders through strategic prompting involves crafting precise and contextually relevant queries to obtain tailored suggestions. In this project, we apply prompt engineering techniques to ask one of the most popular LLM (ChatGPT) to generate movie suggestions based on user's watch history and compare its result with a baseline collaborative filtering recommender system.
@@ -20,4 +21,6 @@ However, with the user watch histories and preferences, we can create a collabor
 
 Or get a predicted rating from a specific user and movie set
 ![Screenshot](https://github.com/changyuhsin1999/LLM_Item_Recommendation/blob/main/images/Screenshot%202023-12-07%20at%203.53.37%20PM.png)
+For more detail of the training process please visit [Collab filtering notebook](https://github.com/changyuhsin1999/LLM_Item_Recommendation/blob/main/Baseline_collab_filtering_movie_rec.ipynb) and run with Google Colab GPU
 
+# Prompting
