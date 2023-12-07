@@ -62,6 +62,9 @@ def get_similar_users(user_id, data):
     Returns:
     int: The user ID of the most similar user.
     """
+    from sklearn.metrics.pairwise import cosine_similarity
+    import pandas as pd
+    
     user_movie_matrix = data.pivot_table(index='userId', columns='title', values='rating')
     user_movie_matrix = user_movie_matrix.fillna(0)
     similarity_matrix = cosine_similarity(user_movie_matrix)
