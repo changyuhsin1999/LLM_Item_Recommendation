@@ -11,3 +11,4 @@ We obtained data from the famous movie recommending dataset : MovieLens latest d
 
 # Data sourcing process
 Find out top 10 movies that has the highest rating with over 50 counts of ratings (most popular)
+![Screenshot](https://github.com/changyuhsin1999/LLM_Item_Recommendation/blob/main/images/Screenshot%202023-12-07%20at%203.26.53%20PM.png)
