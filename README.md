@@ -31,6 +31,7 @@ We included several zero-shot promptings using ChatGPT API:
 3. Ask ChatGPT to generate 10 movie suggestions a user may also like based on most similar user's watch history
 
 # How To Get Started
+### Clone repo
 ### Prepare your environment
 
 ```
