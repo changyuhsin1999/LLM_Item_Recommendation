@@ -23,4 +23,29 @@ Or get a predicted rating from a specific user and movie set
 ![Screenshot](https://github.com/changyuhsin1999/LLM_Item_Recommendation/blob/main/images/Screenshot%202023-12-07%20at%203.53.37%20PM.png)
 For more detail of the training process please visit [Collab filtering notebook](https://github.com/changyuhsin1999/LLM_Item_Recommendation/blob/main/Baseline_collab_filtering_movie_rec.ipynb) and run with Google Colab GPU
 
-# Prompting
+# Prompting with ChatGPT API
+We included several zero-shot promptings using ChatGPT API:
+
+1. Ask ChatGPT to generate 10 movie suggestions and its predictive ratings based on given user watch history
+2. Ask ChatGPT to generate 10 movie suggestions for a watch party given 2 different users's watch histories with different watch preferences and predict how would these 2 users will rate these 10 movie
+3. Ask ChatGPT to generate 10 movie suggestions a user may also like based on most similar user's watch history
+
+# How To Get Started
+### Prepare your environment
+
+```
+conda create --name openai_envir python=3.7.15
+conda activate openai_envir
+```
+### Install requirement.txt
+
+```
+pip install -r requirements.txt
+```
+### Create an API key and a .env file
+You can obtained an API key by signing up with ChatGPT and follow the step in OpenAI Quickstart page [OpenAI Quickstart](https://platform.openai.com/docs/quickstart?context=python)
+create a .env file in your directory and add your API key into the file
+
+```
+OPENAI_API_KEY='your-api-key-here'
+```
