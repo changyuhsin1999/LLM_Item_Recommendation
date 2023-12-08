@@ -26,8 +26,8 @@ For more detail of the training process please visit [Collab filtering notebook]
 # Prompting with ChatGPT API
 We included several zero-shot promptings using ChatGPT API:
 
-1. Ask ChatGPT to generate 10 movie suggestions and its predictive ratings based on given user watch history
-2. Ask ChatGPT to generate 10 movie suggestions for a watch party given 2 different users's watch histories with different watch preferences and predict how would these 2 users will rate these 10 movie
+1. Watch alone : ask ChatGPT to generate 10 movie suggestions and its predictive ratings based on given user watch history
+2. Watch with partner: ask ChatGPT to generate 10 movie suggestions for a watch party given 2 different users's watch histories with different watch preferences and predict how would these 2 users will rate these 10 movie
 3. Ask ChatGPT to generate 10 movie suggestions a user may also like based on most similar user's watch history
 
 # How To Get Started
