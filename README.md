@@ -1,7 +1,7 @@
 # LLM_Item_Recommendation (AIPI 531 Final Project)
 Team member
 
-Cindy Chang: Data Engineering, Baseline collaborative filtering, Prompting
+Cindy Chang: Data Engineering, Baseline collaborative filtering, Prompting, README file
 
 Yiyang Shao
 
