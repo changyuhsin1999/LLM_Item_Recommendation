@@ -3,11 +3,28 @@ import pandas as pd
 from openai import OpenAI
 from func import *
 
+class MostPopularRecommendor():
+    def __init__(self, train_data):
+        client = OpenAI()
+        self.train_data = train_data
+    
+    def pred(self):
+        movie_popularity = self.train_data.groupby('title').size().sort_values(ascending=False)
+        baseline_pred = []
+        for movie in movie_popularity.index:
+            if movie in candidate:
+                baseline_pred.append(movie)
+            if len(baseline_pred) >= 10:
+                break
+        return baseline_pred
+        
+        
+
 class RecommendPrompt():
     def __init__(self, data):
         client = OpenAI()
         self.data = data
-        self.training_data = 
+        # self.training_data = 
         
     def prompt_recommend_with_user_history(self, userId):
         if user_id in self.data['userId'].values:
