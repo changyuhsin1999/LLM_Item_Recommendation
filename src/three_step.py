@@ -8,37 +8,35 @@ import pandas as pd
 import re
 
 class ThreeStepRecommender:
-    def __init__(self, user_id, candidate_size = 100):
-        client = OpenAI()
-        data = pd.read_csv("data/merged_df.csv")
-        train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
+    def __init__(self, user_id, train_data, candidate_size = 100):
+        self.client = OpenAI()
+        self.data = pd.read_csv("data/merged_df.csv")
         self.user_id = user_id
         self.candidate_size = candidate_size
-        train_user_df = train_data[train_data["userId"] == self.user_id]
-        test_user_df = test_data[test_data["userId"] == self.user_id]
-        train_title, train_rating = train_user_df["title"], train_user_df["rating"]
-        test_title, test_rating = test_user_df["title"], test_user_df["rating"]
+        self.train_data = train_data
+        self.train_user_df = self.train_data[self.train_data["userId"] == self.user_id]
+        self.train_title, self.train_rating = self.train_user_df["title"], self.train_user_df["rating"]
 
     def filter_user(self):
 
         def get_similar_users(user_id, data):
-            user_movie_matrix = data.pivot_table(index='userId', columns='title', values='rating')
+            user_movie_matrix = self.data.pivot_table(index='userId', columns='title', values='rating')
             user_movie_matrix = user_movie_matrix.fillna(0)
             similarity_matrix = cosine_similarity(user_movie_matrix)
             similarity_df = pd.DataFrame(similarity_matrix, index=user_movie_matrix.index, columns=user_movie_matrix.index)
             similar_users = similarity_df[self.user_id].sort_values(ascending=False)
             return similar_users
 
-        similar_users = list(get_similar_users(self.user_id, train_data).iloc[:self.candidate_size].index)
-        train_similar_df = train_data[train_data["userId"].isin(similar_users)]
+        similar_users = list(get_similar_users(self.user_id, self.train_data).iloc[:self.candidate_size].index)
+        train_similar_df = self.train_data[self.train_data["userId"].isin(similar_users)]
         movie_popularity = train_similar_df.groupby('title').size().sort_values(ascending=False)
-        candidate1 = list(movie_popularity.head(self.candidate_size).head(self.candidate_size).index)
+        self.candidate1 = list(movie_popularity.head(self.candidate_size).head(self.candidate_size).index)
 
     def filter_movie(self):
-        train_movie = train_user_df["movieId"]
+        train_movie = self.train_user_df["movieId"]
         watched = pd.unique(train_movie).tolist()
         
-        user_item_matrix = data.pivot_table(index='userId', columns='movieId', values='rating')
+        user_item_matrix = self.data.pivot_table(index='userId', columns='movieId', values='rating')
         user_item_matrix = user_item_matrix.fillna(0)
         item_similarity = cosine_similarity(user_item_matrix.T)
         
@@ -53,106 +51,81 @@ class ThreeStepRecommender:
 
         similar_movies = []
         for movie in watched:
-            similar_movies.append(find_similar_movies(movie, train_data))
+            similar_movies.append(find_similar_movies(movie, self.train_data))
         similar_df = pd.concat(similar_movies)
 
         movie_popularity = similar_df.groupby('movieId').size().sort_values(ascending=False)
-        candidate2 = list(movie_popularity.head(self.candidate_size).head(self.candidate_size).index)
-        candidate2 = train_data.loc[train_data['movieId'].isin(candidate2), 'title'].tolist()
-        candidate = list(set(candidate1) | set(candidate2))
-
-        def clean_candidate(candidate, train_title, test_title):
-            to_remove = []
-            
-            for movie in candidate:
-                if movie in train_title:
-                    ro_remove.append(movie)
-                    print(f"to remove: {movie} ")
-            count1 = 0
-            count2 = 0
-            for movie in to_remove:
-                candidate.append(movie)
-            for movie in test_title:
-                if movie not in candidate:
-                    # print(f"not in candidate: {movie} ")
-                    count1 += 1
-                else:
-                    # print(movie)
-                    count2 += 1
-            print(count1, count2)
-                    
-            return candidate
-                    
-        candidate = clean_candidate(candidate, train_title, test_title)
+        self.candidate2 = list(movie_popularity.head(self.candidate_size).head(self.candidate_size).index)
+        self.candidate2 = self.train_data.loc[self.train_data['movieId'].isin(self.candidate2), 'title'].tolist()
+        self.candidate = list(set(self.candidate1) | set(self.candidate2))
 
     def step1(self):
-        movie_rating = ""
-        for i in range(len(train_title)):
-            movie_rating += f"{train_title.iloc[i]}: {train_rating.iloc[i]} \n"
+        self.movie_rating = ""
+        for i in range(len(self.train_title)):
+            self.movie_rating += f"{self.train_title.iloc[i]}: {self.train_rating.iloc[i]} \n"
 
-        if self.user_id in data['userId'].values:
-            titles_list, ratings_list = get_user_watch_history(self.user_id, data)
+        if self.user_id in self.data['userId'].values:
+            titles_list, ratings_list = get_user_watch_history(self.user_id, self.data)
             messages=[
-                # {"role": "user", "content": f"Candidate Set(candidate movies): "},
-                {"role": "user", "content": f"The movies I have watched(watched movies): {movie_rating}"},
+                # {"role": "user", "content": f"self.candidate Set(self.candidate movies): "},
+                {"role": "user", "content": f"The movies I have watched(watched movies): {self.movie_rating}"},
                 {"role": "user", "content": f"Step 1: What features are most important to me when selecting movies? "},
             ]
-            completion = client.chat.completions.create(
+            completion = self.client.chat.completions.create(
                 model="gpt-3.5-turbo-1106",
                 messages=messages
             )
 
-        answer1 = (completion.choices[0].message.content)
-        answer1
+        self.answer1 = (completion.choices[0].message.content)
 
 
     def step2(self):
 
         messages=[
-            {"role": "user", "content": f"The movies I have watched(watched movies) and their ratings: {movie_rating}"},
+            {"role": "user", "content": f"The movies I have watched(watched movies) and their ratings: {self.movie_rating}"},
             {"role": "user", "content": f"Step 1: What features are most important to me when selecting movies? "},
         ]
 
-        messages.append({"role": "assistant", "content": answer1})
+        messages.append({"role": "assistant", "content": self.answer1})
                         
         step2 = "You will select the movies (at most 10 movies) that appeal to me the most from the list of movies \
             I have watched, based on my personal preferences. The selected movies will be presented in descending \
             order of preference. (Format: no. a watched movie)."
             
         messages.append({"role": "user", "content": step2})
+        
+        self.messages = messages
                         
-        completion = client.chat.completions.create(
+        completion = self.client.chat.completions.create(
                 model="gpt-3.5-turbo-1106",
                 messages=messages
             )
 
-        answer2 = (completion.choices[0].message.content)
-        print(answer2)
+        self.answer2 = (completion.choices[0].message.content)
         
     def step3(self):
 
-        messages.append({"role": "assistant", "content": answer2})
+        self.messages.append({"role": "assistant", "content": self.answer2})
 
-        messages.append({"role": "user", "content": f"Candidate Set(candidate movies): {', '.join(candidate)}"},)
+        self.messages.append({"role": "user", "content": f"self.candidate Set(self.candidate movies): {', '.join(self.candidate)}"},)
                         
-        step3 = "Can you recommend 10 different movies only from the Candidate Set similar to the selected \
-            movies I've watched (Format: [<n>. <a watched movie> : <a candidate movie>])?" + f"Candidate Set(candidate movies): {', '.join(candidate)}"
+        step3 = "Can you recommend 10 different movies only from the self.candidate Set similar to the selected \
+            movies I've watched (Format: [<n>. <a watched movie> : <a self.candidate movie>])?" + f"self.candidate Set(self.candidate movies): {', '.join(self.candidate)}"
             
-        messages.append({"role": "user", "content": step3})
+        self.messages.append({"role": "user", "content": step3})
                         
-        completion = client.chat.completions.create(
+        completion = self.client.chat.completions.create(
                 model="gpt-3.5-turbo-1106",
-                messages=messages
+                messages=self.messages
             )
 
-        answer3 = (completion.choices[0].message.content)
-        print(answer3)
+        self.answer3 = (completion.choices[0].message.content)
 
 
 
 
         def parse_answer3(answer3):
-            lines = answer3.split('\n')
+            lines = self.answer3.split('\n')
             pattern = r': (.*?) \((\d+)\)'
             movie_pred = []
             for line in lines:
@@ -163,15 +136,18 @@ class ThreeStepRecommender:
                     movie_pred.append((title, year))
             return movie_pred
 
-        movie_pred = parse_answer3(answer3)
+        self.movie_pred = parse_answer3(self.answer3)
         
     def get_pred(self):
         self.filter_user()
         self.filter_movie()
         self.step1()
+        print("finish step 1")
         self.step2()
+        print("finish step 2")
         self.step3()
-        return movie_pred
+        print("finish step 3")
+        return self.movie_pred
         
 
     def accuracy(self, movie_pred, test_title):
@@ -181,21 +157,18 @@ class ThreeStepRecommender:
             if "The" in title:
                 title = title[4:]
             find_candidate = 0
-            for movie in candidate:
+            for movie in self.candidate:
                 if title in movie:
                     find_candidate = 1
                     break
             if not find_candidate:
-                print(f"{title} not in candidate")
+                pass
+                # print(f"{title} not in self.candidate")
             for movie in test_title_list:
                 if title in movie:
-                    print(f"{title} in test")
+                    # print(f"{title} in test")
                     correct += 1
                     break
         return correct / len(movie_pred)
     
     
-    def
-
-
-accuracy(movie_pred, test_title)
