@@ -141,11 +141,11 @@ class ThreeStepRecommender:
         self.filter_user()
         self.filter_movie()
         self.step1()
-        print("finish step 1")
+        # print("finish step 1")
         self.step2()
-        print("finish step 2")
+        # print("finish step 2")
         self.step3()
-        print("finish step 3")
+        # print("finish step 3")
         return self.movie_pred
         
 
