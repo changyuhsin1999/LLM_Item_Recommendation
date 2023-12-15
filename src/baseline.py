@@ -12,11 +12,20 @@ class MostPopularRecommendor():
         movie_popularity = self.train_data.groupby('title').size().sort_values(ascending=False)
         baseline_pred = []
         for movie in movie_popularity.index:
-            if movie in candidate:
-                baseline_pred.append(movie)
+            baseline_pred.append(movie)
             if len(baseline_pred) >= 10:
                 break
         return baseline_pred
+    
+    def accuracy(self, movie_pred, test_title):
+        correct = 0
+        test_title_list = list(test_title)
+        for movie in movie_pred:
+            if movie in test_title_list:
+                # print(f"{movie} in test")
+                correct += 1
+                break
+        return correct / len(movie_pred)
         
         
 

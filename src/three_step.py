@@ -10,7 +10,6 @@ import re
 class ThreeStepRecommender:
     def __init__(self, user_id, train_data, candidate_size = 100):
         self.client = OpenAI()
-        self.data = pd.read_csv("data/merged_df.csv")
         self.user_id = user_id
         self.candidate_size = candidate_size
         self.train_data = train_data
@@ -20,7 +19,7 @@ class ThreeStepRecommender:
     def filter_user(self):
 
         def get_similar_users(user_id, data):
-            user_movie_matrix = self.data.pivot_table(index='userId', columns='title', values='rating')
+            user_movie_matrix = data.pivot_table(index='userId', columns='title', values='rating')
             user_movie_matrix = user_movie_matrix.fillna(0)
             similarity_matrix = cosine_similarity(user_movie_matrix)
             similarity_df = pd.DataFrame(similarity_matrix, index=user_movie_matrix.index, columns=user_movie_matrix.index)
@@ -36,7 +35,7 @@ class ThreeStepRecommender:
         train_movie = self.train_user_df["movieId"]
         watched = pd.unique(train_movie).tolist()
         
-        user_item_matrix = self.data.pivot_table(index='userId', columns='movieId', values='rating')
+        user_item_matrix = self.train_data.pivot_table(index='userId', columns='movieId', values='rating')
         user_item_matrix = user_item_matrix.fillna(0)
         item_similarity = cosine_similarity(user_item_matrix.T)
         
@@ -64,8 +63,8 @@ class ThreeStepRecommender:
         for i in range(len(self.train_title)):
             self.movie_rating += f"{self.train_title.iloc[i]}: {self.train_rating.iloc[i]} \n"
 
-        if self.user_id in self.data['userId'].values:
-            titles_list, ratings_list = get_user_watch_history(self.user_id, self.data)
+        if self.user_id in self.train_data['userId'].values:
+            titles_list, ratings_list = get_user_watch_history(self.user_id, self.train_data)
             messages=[
                 # {"role": "user", "content": f"self.candidate Set(self.candidate movies): "},
                 {"role": "user", "content": f"The movies I have watched(watched movies): {self.movie_rating}"},
