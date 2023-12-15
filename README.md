@@ -39,7 +39,11 @@ In file prompting.ipynb, we included several zero-shot promptings using ChatGPT 
 4. Ask ChatGPT to generate 10 movie suggestions a user may also like based on most similar user's watch history
 
 # Evaluation
-We include the evaluation result in evaluation.ipynb. The evaluation metric include accuracy of recommendation, and RMSE of rating prediction. 
+In terms of prediction accuracy, certain models may exhibit lower accuracy due to their recommendations not aligning with the movie dataset. GPT models, having access to a broader range of movies, might offer suggestions that are not within the dataset we are utilizing.
+
+It's important to note that achieving a 20% accuracy rate is considered high. This is because two out of the ten recommendations coincide with the test set, and the test set itself comprises only six items, while there are thousands of candidates to choose from.
+
+Our user history prompting model has a higher performance than 3-step and most-popular models. Our rating prediction model has a lower RMSE than the collaborative filtering prediction model. 
 
 # How To Get Started
 ### Clone repo
@@ -61,3 +65,9 @@ create a .env file in your directory and add your API key into the file
 ```
 OPENAI_API_KEY='your-api-key-here'
 ```
+
+### Inspect the jupyter notebooks
+Data Preprocessing: data processing.ipynb
+3-step Prompting: prompting_3step.ipynb
+Our new prompting strategies: prompting.ipynb
+evaluation: evaluation.ipynb
