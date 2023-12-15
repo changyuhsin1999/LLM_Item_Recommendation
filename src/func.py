@@ -1,3 +1,21 @@
+import re
+def extract_string1(string):
+        lines = string.split('\n')
+        pattern1 = r'(\d+)\. (.*?) \((\d+)\)'
+        pattern2 = r'(\d+\.\d+)'
+        movie_info = []
+        for line in lines:
+            if '-' in line:
+                match1 = re.search(pattern1, line)
+                match2 = re.search(pattern2, line)
+                if match1 and match2:
+                    rank = match1.group(1)
+                    title = match1.group(2)
+                    year = match1.group(3)
+                    rating = match2.group(1)
+                    movie_info.append((title, rating))
+        return movie_info
+
 def get_user_watch_history(user_id, data, fraction=0.8):
     """
     Extracts a fraction of a specified user's watch history from a given dataset.
