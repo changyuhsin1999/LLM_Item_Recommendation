@@ -110,7 +110,7 @@ class RecommendPrompt():
             )
             response = completion.choices[0].message.content
             recommendations = self.extract_string1(response)
-            rms = self.evaluation(recommendation, user_id)
+            rms = self.evaluation(recommendations, user_id)
             print(f"Recommendation Rating RMSE: {rms}")
             return messages, response, recommendations
         else:
@@ -142,5 +142,21 @@ class RecommendPrompt():
         y_true = self.test_data[self.test_data["userId"] == user_id]["rating"].tolist()
         rms = mean_squared_error(y_true, y_pred, squared=True)
         return rms
+    
+    def accuracy(self, recommendation, user_id):
+        test_data_user = self.test_data[self.test_data["userId"] == user_id]
+        test_title, test_ratings = test_data_user["title"], test_data_user["rating"]
+        correct = 0
+        test_title_list = list(test_title)
+        for title, rating in recommendation:
+            if "The" in title:
+                title = title[4:]
+            find_candidate = 0
+            for movie in test_title_list:
+                if title in movie:
+                    print(f"{title} in test")
+                    correct += 1
+                    break
+        return correct / len(recommendation)
         
         

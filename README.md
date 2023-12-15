@@ -1,9 +1,9 @@
 # LLM_Item_Recommendation (AIPI 531 Final Project)
 Team member
 
-Cindy Chang: Data Engineering, Baseline collaborative filtering, Prompting, README file
+Cindy Chang: Data Engineering, Baseline collaborative filtering, Improved Prompting, README file
 
-Yiyang Shao
+Yiyang Shao: 3-step Prompting, Bundle code into a library, Evaluation
 
 Prompt Engineering of LLM for item recommendation task
 
@@ -27,12 +27,19 @@ Or get a predicted rating from a specific user and movie set
 ![Screenshot](https://github.com/changyuhsin1999/LLM_Item_Recommendation/blob/main/images/Screenshot%202023-12-07%20at%203.53.37%20PM.png)
 For more detail of the training process please visit [Collab filtering notebook](https://github.com/changyuhsin1999/LLM_Item_Recommendation/blob/main/Baseline_collab_filtering_movie_rec.ipynb) and run with Google Colab GPU
 
+# 3-Step Prompting
+We follow the 3-step prompt engineering approaches mentioned in https://arxiv.org/pdf/2304.03153.pdf. and make some improvements about the prompt. Details are in prompting_3step.ipynb.
+
 # Prompting with ChatGPT API
-We included several zero-shot promptings using ChatGPT API:
+In file prompting.ipynb, we included several zero-shot promptings using ChatGPT API:
 
 1. Watch alone : ask ChatGPT to generate 10 movie suggestions and its predictive ratings based on given user watch history
 2. Watch with partner: ask ChatGPT to generate 10 movie suggestions for a watch party given 2 different users's watch histories with different watch preferences and predict how would these 2 users will rate these 10 movie
-3. Ask ChatGPT to generate 10 movie suggestions a user may also like based on most similar user's watch history
+3. Recommendation with genre: We integrate the genre information into the recommendation. We ask ChatGPT to recommend movies based on user's favorate genre. 
+4. Ask ChatGPT to generate 10 movie suggestions a user may also like based on most similar user's watch history
+
+# Evaluation
+We include the evaluation result in evaluation.ipynb. The evaluation metric include accuracy of recommendation, and RMSE of rating prediction. 
 
 # How To Get Started
 ### Clone repo
